@@ -5,6 +5,9 @@
 3. Copia `.env.example` como `.env` y pega tu URL y llave anon de Supabase.
 4. `npm run dev` y abre la dirección que muestre la terminal.
 
+## Publicar en GitHub Pages
+El workflow `.github/workflows/deploy.yml` compila y publica automáticamente cada push a `main`. En GitHub, abre **Settings > Pages** y selecciona **GitHub Actions** como fuente. Para que la app se conecte a Supabase, crea `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en **Settings > Secrets and variables > Actions > New repository secret**. Usa la llave anon/publishable; nunca publiques la llave `service_role`.
+
 Requiere haber ejecutado `pymeconnect_supabase.sql` (y `antispam_reportes.sql` para los reportes).
 
 ## Comerciante y administrador
