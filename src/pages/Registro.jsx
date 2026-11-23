@@ -49,20 +49,33 @@ export default function Registro() {
 
     setEnviando(true);
     recordarSesion(false);
-    const { data, error } = await supabase.auth.signUp({
-    email: f.correo.trim().toLowerCase(),
-    password: f.clave,
-    options: {
-        emailRedirectTo: `${window.location.origin}/#/login`,
-        data: {
-            nombre: limpiar(f.nombre),
-            apellidos: "",
+    const partesNombre = limpiar(f.nombre).split(/\s+/);
+    const nombre = partesNombre.shift() || "";
+    const apellidos = partesNombre.join(" ");
+    let data, error;
+    try {
+      ({ data, error } = await supabase.auth.signUp({
+        email: f.correo.trim().toLowerCase(),
+        password: f.clave,
+        options: {
+          emailRedirectTo: `${window.location.origin}/#/login`,
+          data: {
+            nombre,
+            apellidos,
             negocio: limpiar(f.negocio),
-            telefono: soloDigitos(f.telefono)
-        }
+            telefono: soloDigitos(f.telefono),
+            direccion: limpiar(f.direccion),
+            categoria_id: String(f.categoria),
+          },
+        },
+      }));
+    } catch (err) {
+      console.error("[registro] No se pudo contactar Supabase", err);
+      setMsg("No pudimos conectar con el servicio de registro. Intenta de nuevo en unos minutos.");
+      return;
+    } finally {
+      setEnviando(false);
     }
-});
-    setEnviando(false);
     if (error) {
       const c = error.code || "";
       setMsg(c === "weak_password" ? "Esa contraseña es muy fácil de adivinar. Elige otra."
