@@ -50,14 +50,18 @@ export default function Registro() {
     setEnviando(true);
     recordarSesion(false);
     const { data, error } = await supabase.auth.signUp({
-      email: f.correo.trim().toLowerCase(),
-      password: f.clave,
-      options: {
+    email: f.correo.trim().toLowerCase(),
+    password: f.clave,
+    options: {
         emailRedirectTo: `${window.location.origin}/#/login`,
-        // Solo datos de presentación. El ROL lo asigna el servidor (trigger), nunca el navegador.
-        data: { nombre: limpiar(f.nombre), negocio: limpiar(f.negocio), telefono: soloDigitos(f.telefono), direccion: limpiar(f.direccion), categoria_id: f.categoria },
-      },
-    });
+        data: {
+            nombre: limpiar(f.nombre),
+            apellidos: "",
+            negocio: limpiar(f.negocio),
+            telefono: soloDigitos(f.telefono)
+        }
+    }
+});
     setEnviando(false);
     if (error) {
       const c = error.code || "";
