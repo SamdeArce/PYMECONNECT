@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import DirectorioLayout from "./pages/directorio/DirectorioLayout.jsx";
 import Explorar from "./pages/Explorar.jsx";
 import Comercio from "./pages/Comercio.jsx";
 import Login from "./pages/Login.jsx";
@@ -17,7 +18,6 @@ import Usuarios from "./pages/admin/Usuarios.jsx";
 import Comercios from "./pages/admin/Comercios.jsx";
 import Verificaciones from "./pages/admin/Verificaciones.jsx";
 import Reportes from "./pages/admin/Reportes.jsx";
-import { configurado } from "./supabase.js";
 
 const leer = (k, def) => { try { return localStorage.getItem(k) ?? def; } catch { return def; } };
 const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch { /* sin almacenamiento */ } };
@@ -68,40 +68,13 @@ export default function App() {
   }
 
   return (
-    <>
-      <header className="encabezado">
-        <Link to="/" className="marca" aria-label="PYMECONNECT, ir al inicio">
-          <span className="logo" aria-hidden="true">🏪</span>
-          <span>
-            <strong className="marca-nombre">PYMECONNECT</strong>
-            <small className="marca-lema">TUS NEGOCIOS MÁS CERCA · MARAVATÍO</small>
-          </span>
-        </Link>
-        <div className="acciones">
-          <Link to="/login" className="btn btn-primario">🏪 Acceso comerciantes</Link>
-          <button className="btn btn-borde" onClick={() => setGrande(!grande)} aria-pressed={grande}>
-            Aa {grande ? "Texto normal" : "Texto más grande"}
-          </button>
-          <button className="btn btn-borde" onClick={() => setOscuro(!oscuro)} aria-pressed={oscuro}>
-            {oscuro ? "☀ Modo claro" : "☾ Modo oscuro"}
-          </button>
-        </div>
-      </header>
-
-      <main className="contenedor">
-        {!configurado && (
-          <div className="aviso" role="alert">
-            Falta conectar Supabase. Copia <code>.env.example</code> como <code>.env</code> y
-            llena tus datos; luego reinicia con <code>npm run dev</code>.
-          </div>
-        )}
-        <Routes>
-          <Route path="/" element={<Explorar />} />
-          <Route path="/comercio" element={<Navigate to="/" replace />} />  {/* sin id no hay qué mostrar: vuelve al directorio */}
-          <Route path="/comercio/:id" element={<Comercio />} />
-          <Route path="*" element={<p>Página no encontrada. <Link to="/">Volver al directorio</Link></p>} />
-        </Routes>
-      </main>
-    </>
+    <Routes>
+      <Route element={<DirectorioLayout oscuro={oscuro} setOscuro={setOscuro} grande={grande} setGrande={setGrande} />}>
+        <Route path="/" element={<Explorar />} />
+        <Route path="/comercio" element={<Navigate to="/" replace />} />  {/* sin id no hay qué mostrar: vuelve al directorio */}
+        <Route path="/comercio/:id" element={<Comercio />} />
+        <Route path="*" element={<p>Página no encontrada. <Link to="/">Volver al directorio</Link></p>} />
+      </Route>
+    </Routes>
   );
 }
