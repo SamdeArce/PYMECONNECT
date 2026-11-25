@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useOutletContext, useParams } from "react-router-dom";
 import { supabase } from "../supabase.js";
 import { useFav } from "../favoritos.jsx";
+import { iconoCat } from "../lib/categorias.js";
 
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const MOTIVOS = [
@@ -15,6 +16,7 @@ const hora = (t) => (t ? t.slice(0, 5) : "");
 
 export default function Comercio() {
   const { id } = useParams();
+  const { cats = [] } = useOutletContext() || {};
   const { ids, alternar } = useFav();
   const [n, setN] = useState(null);
   const [horarios, setHorarios] = useState([]);
@@ -43,47 +45,59 @@ export default function Comercio() {
     ? `https://www.google.com/maps/dir/?api=1&destination=${n.latitud},${n.longitud}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.direccion || n.nombre)}`;
 
-  return (
-    <article>
-      <Link to="/" className="volver">← Volver al directorio</Link>
-      <h1>{n.nombre}</h1>
-      <p className="muted">{n.categoria}{n.verificado && " · ✔ Verificado"}</p>
-      <span className={`estado ${n.abierto_ahora ? "abierto" : "cerrado"}`}>{n.abierto_ahora ? "Abierto ahora" : "Cerrado"}</span>
-      {n.foto_url && <img className="portada" src={n.foto_url} alt={`Fachada de ${n.nombre}`} />}
-      {n.descripcion && <p>{n.descripcion}</p>}
-      {n.direccion && <p>📍 {n.direccion}</p>}
+  const icono = iconoCat(cats.find((c) => c.slug === n.categoria_slug)?.icono);
 
-      <div className="acciones-fila">
-        {tel && <a className="btn btn-primario" href={`tel:${tel}`}>📞 Llamar</a>}
-        {wa && <a className="btn btn-primario" href={`https://wa.me/52${wa}`} target="_blank" rel="noreferrer">💬 WhatsApp</a>}
-        <a className="btn btn-primario" href={mapa} target="_blank" rel="noreferrer">🧭 Cómo llegar</a>
-        <button className="btn btn-borde" onClick={() => alternar(n.id)} aria-pressed={ids.includes(n.id)}>
-          {ids.includes(n.id) ? "♥ En favoritos" : "♡ Guardar"}
-        </button>
+  return (
+    <article className="dr-ficha">
+      <Link to="/" className="dr-volver">← Volver al directorio</Link>
+
+      <div className="dr-hero">
+        {n.foto_url ? <img src={n.foto_url} alt={`Fachada de ${n.nombre}`} /> : <span aria-hidden="true">{icono}</span>}
       </div>
 
-      <section className="panel">
-        <h2>Horario</h2>
-        {horarios.length === 0 && <p className="muted">Horario por confirmar con el comercio.</p>}
-        <ul className="lista">
-          {horarios.map((h) => (
-            <li key={h.id}><span>{DIAS[h.dia_semana]}</span><span>{h.cerrado ? "Cerrado" : `${hora(h.abre)} – ${hora(h.cierra)}`}</span></li>
-          ))}
-        </ul>
-      </section>
+      <div className="dr-ficha-grid">
+        <div className="dr-ficha-main">
+          <h1>{n.nombre}</h1>
+          <p className="muted">{n.categoria}{n.verificado && " · ✔ Verificado"}</p>
+          <span className={`estado ${n.abierto_ahora ? "abierto" : "cerrado"}`}>{n.abierto_ahora ? "Abierto ahora" : "Cerrado"}</span>
+          {n.descripcion && <p className="dr-ficha-desc">{n.descripcion}</p>}
+          {n.direccion && <p>📍 {n.direccion}</p>}
 
-      {productos.length > 0 && (
-        <section className="panel">
-          <h2>Productos y servicios</h2>
-          <ul className="lista">
-            {productos.map((p) => (
-              <li key={p.id}><span>{p.nombre}</span><span>{p.precio != null && `$${Number(p.precio).toFixed(2)}`}</span></li>
-            ))}
-          </ul>
-        </section>
-      )}
+          <div className="acciones-fila">
+            {tel && <a className="btn btn-primario" href={`tel:${tel}`}>📞 Llamar</a>}
+            {wa && <a className="btn btn-primario" href={`https://wa.me/52${wa}`} target="_blank" rel="noreferrer">💬 WhatsApp</a>}
+            <a className="btn btn-primario" href={mapa} target="_blank" rel="noreferrer">🧭 Cómo llegar</a>
+            <button className="btn btn-borde" onClick={() => alternar(n.id)} aria-pressed={ids.includes(n.id)}>
+              {ids.includes(n.id) ? "♥ En favoritos" : "♡ Guardar"}
+            </button>
+          </div>
 
-      <Reporte comercioId={n.id} />
+          <Reporte comercioId={n.id} />
+        </div>
+
+        <aside className="dr-ficha-lado">
+          <section className="dr-caja">
+            <h2>Horario</h2>
+            {horarios.length === 0 && <p className="muted">Horario por confirmar con el comercio.</p>}
+            <ul className="lista">
+              {horarios.map((h) => (
+                <li key={h.id}><span>{DIAS[h.dia_semana]}</span><span>{h.cerrado ? "Cerrado" : `${hora(h.abre)} – ${hora(h.cierra)}`}</span></li>
+              ))}
+            </ul>
+          </section>
+
+          {productos.length > 0 && (
+            <section className="dr-caja">
+              <h2>Productos y servicios</h2>
+              <ul className="lista">
+                {productos.map((p) => (
+                  <li key={p.id}><span>{p.nombre}</span><span>{p.precio != null && `$${Number(p.precio).toFixed(2)}`}</span></li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </aside>
+      </div>
     </article>
   );
 }
