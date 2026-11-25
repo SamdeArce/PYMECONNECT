@@ -17,6 +17,7 @@ import Usuarios from "./pages/admin/Usuarios.jsx";
 import Comercios from "./pages/admin/Comercios.jsx";
 import Verificaciones from "./pages/admin/Verificaciones.jsx";
 import Reportes from "./pages/admin/Reportes.jsx";
+import Entrevistas from "./pages/admin/Entrevistas.jsx";
 import { configurado } from "./supabase.js";
 
 const leer = (k, def) => { try { return localStorage.getItem(k) ?? def; } catch { return def; } };
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="comercios" element={<Comercios />} />
             <Route path="verificaciones" element={<Verificaciones />} />
             <Route path="reportes" element={<Reportes />} />
+            <Route path="entrevistas" element={<Entrevistas />} />
             <Route path="*" element={<Proximamente titulo="Página no encontrada" />} />
           </Route>
         </Route>

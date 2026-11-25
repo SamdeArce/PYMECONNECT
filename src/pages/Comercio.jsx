@@ -41,7 +41,7 @@ export default function Comercio() {
   const wa = (n.whatsapp || "").replace(/\D/g, "");
   const mapa = n.latitud && n.longitud
     ? `https://www.google.com/maps/dir/?api=1&destination=${n.latitud},${n.longitud}`
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.direccion)}`;
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.direccion || n.nombre)}`;
 
   return (
     <article>
@@ -51,7 +51,7 @@ export default function Comercio() {
       <span className={`estado ${n.abierto_ahora ? "abierto" : "cerrado"}`}>{n.abierto_ahora ? "Abierto ahora" : "Cerrado"}</span>
       {n.foto_url && <img className="portada" src={n.foto_url} alt={`Fachada de ${n.nombre}`} />}
       {n.descripcion && <p>{n.descripcion}</p>}
-      <p>📍 {n.direccion}</p>
+      {n.direccion && <p>📍 {n.direccion}</p>}
 
       <div className="acciones-fila">
         {tel && <a className="btn btn-primario" href={`tel:${tel}`}>📞 Llamar</a>}
@@ -64,6 +64,7 @@ export default function Comercio() {
 
       <section className="panel">
         <h2>Horario</h2>
+        {horarios.length === 0 && <p className="muted">Horario por confirmar con el comercio.</p>}
         <ul className="lista">
           {horarios.map((h) => (
             <li key={h.id}><span>{DIAS[h.dia_semana]}</span><span>{h.cerrado ? "Cerrado" : `${hora(h.abre)} – ${hora(h.cierra)}`}</span></li>

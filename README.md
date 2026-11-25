@@ -27,3 +27,15 @@ Nota: la protección de rutas en el navegador es solo UX; la seguridad real es R
 
 ## Diseño del login
 `src/pages/login.css` (bloque "Login v2", todo bajo `.lg-v2`) usa la foto `src/assets/fondo-cafe.jpg` como fondo. Para cambiarla, reemplaza ese archivo. Registro aún usa el diseño anterior.
+
+## Datos reales de las entrevistas
+`supabase/entrevistas_datos_reales.sql` carga los 12 comercios del "Registro de entrevistas a comercios locales":
+crea la tabla `entrevistas`, una cuenta de comerciante por negocio (`<negocio>@pymeconnect.test`, ya confirmada),
+su comercio, su catálogo (productos mencionados, sin precio) y la entrevista. Es idempotente.
+
+1. Abre el archivo, cambia `CAMBIA_ESTA_CLAVE` por la contraseña inicial de esas cuentas.
+2. Pégalo en Supabase → SQL Editor → Run. Al final muestra una tabla de comprobación (12 filas).
+3. Las respuestas se consultan en `/#/admin/entrevistas` (solo administradores).
+
+Solo se cargan datos reales: 8 entrevistas con respuestas y, para Alcormia Coffee, Centro de Nutrición Mora,
+Dulces y Botanas Vale y Fresty, únicamente las observaciones del equipo (las "respuestas simuladas" del borrador no se cargan).

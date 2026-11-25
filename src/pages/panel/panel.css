@@ -190,3 +190,21 @@ button.pn-btn-oscuro:disabled { opacity: .6; cursor: not-allowed; }
 .pn-sep { margin-top: 1.4rem; }
 .btn.pn-peligro { background: var(--mal); color: #fff; border: 1px solid var(--mal); }
 .pn-archivos li svg { flex: none; }
+
+/* ── Entrevistas (admin) ─────────────────────────────────────────── */
+.pn-btn-oscuro { gap: .5rem; border: 0; cursor: pointer; }
+.pn-btn-oscuro:disabled { opacity: .5; cursor: not-allowed; }
+.pn-necesidades { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; gap: .55rem; }
+.pn-necesidades li { display: grid; grid-template-columns: minmax(9rem, 14rem) 1fr 2rem; align-items: center; gap: .8rem; font-weight: 600; font-size: .9rem; }
+.pn-necesidades strong { text-align: right; }
+.pn-nec-barra { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.pn-nec-barra span { display: block; height: 100%; border-radius: 99px; background: var(--brown); }
+.pn-entrevista { display: grid; gap: .6rem; padding: .4rem 0; }
+.pn-entrevista h3 { font-size: .95rem; margin: .4rem 0 0; }
+.pn-entrevista ul { margin: 0; padding-left: 1.2rem; }
+.pn-ent-sintesis { margin: 0; padding: .8rem 1rem; border-radius: 12px; background: var(--cream); color: var(--brown-dark); }
+:root[data-theme="dark"] .pn-ent-sintesis { background: #3a3122; color: var(--ink); }
+.pn-ent-qa { margin: 0; padding-left: 1.4rem; display: grid; gap: .6rem; }
+.pn-ent-qa li strong { display: block; font-size: .88rem; }
+.pn-ent-qa li span { display: block; }
+@media (max-width: 640px) { .pn-necesidades li { grid-template-columns: 1fr 2rem; } .pn-nec-barra { grid-column: 1 / -1; grid-row: 2; } }

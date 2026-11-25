@@ -7,6 +7,7 @@ const NAV = [
   ["/admin/comercios", "negocio", "Comercios"],
   ["/admin/verificaciones", "check", "Verificaciones"],
   ["/admin/reportes", "reporte", "Reportes"],
+  ["/admin/entrevistas", "entrevista", "Entrevistas"],
 ];
 
 export default function AdminLayout() {

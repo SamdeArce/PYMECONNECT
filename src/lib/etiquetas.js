@@ -4,6 +4,9 @@ export const ESTADO_REPORTE = { pendiente: "Pendiente", en_revision: "En revisi�
 export const ESTADO_VERIF = { pendiente: "Pendiente", en_revision: "En revisión", info_adicional: "Falta información", aprobada: "Aprobada", rechazada: "Rechazada" };
 export const ESTADO_COMERCIO = { activo: "Activo", suspendido: "Suspendido", baja: "Baja" };
 export const ESTADO_CUENTA = { activo: "Activo", suspendido: "Suspendido" };
+// Necesidades detectadas en las entrevistas a comercios (tabla `entrevistas`, columna `necesidades`)
+export const NECESIDADES = { pedidos: "Pedidos en línea", catalogo: "Catálogo digital", ubicacion: "Ubicación / mapa", horarios: "Horarios", telefono: "Teléfono", fotos: "Fotografías", visibilidad: "Mayor visibilidad", inventario: "Control de inventario", promociones: "Difundir promociones", pago_tarjeta: "Pago con tarjeta", contacto: "Datos de contacto", sucursales: "Sucursales", sencillez: "Interfaz sencilla (público mayor)" };
+export const ESTADO_ENTREVISTA = { realizada: "Realizada", pendiente: "Sin entrevista" };
 export const ROL = { comerciante: "Comerciante", admin: "Administrador" };
 
 // Color del distintivo según el estado: "" verde · "pausado" ámbar · "rechazo" rojo
