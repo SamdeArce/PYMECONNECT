@@ -8,21 +8,28 @@
 .dr-app {
   --lado: #a1b168; --lado-tx: #2a2312; --lado-card: rgba(255,254,248,.34);
   --lado-activo: #fffef8; --lado-activo-tx: #2a2312; --lado-linea: rgba(42,35,18,.18);
-  min-height: 100vh; padding: clamp(0px, 2vw, 24px); background: var(--soft);
+  /* Fondo verde de la paleta: más claro que la barra lateral (--lime) para que ésta siga resaltando. */
+  --fondo-app: color-mix(in srgb, var(--lime) 55%, var(--page));
+  --margen: clamp(0px, 2vw, 24px);
+  min-height: 100vh; padding: var(--margen);
+  background:
+    radial-gradient(ellipse at top left, color-mix(in srgb, var(--lime) 30%, transparent), transparent 60%),
+    var(--fondo-app);
 }
 :root[data-theme="dark"] .dr-app {
   --lado: #33361f; --lado-tx: #f0edc7; --lado-card: rgba(255,254,248,.08);
   --lado-activo: #f0edc7; --lado-activo-tx: #211b16; --lado-linea: rgba(240,237,199,.18);
+  --fondo-app: color-mix(in srgb, #33361f 70%, var(--page));
 }
 .dr-marco {
   max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 17.5rem minmax(0, 1fr);
-  min-height: calc(100vh - 48px); background: var(--page); border-radius: 30px; overflow: clip;
+  min-height: calc(100vh - 2 * var(--margen)); background: var(--page); border-radius: 30px; overflow: clip;
   border: 1px solid var(--line); box-shadow: 0 30px 70px -30px rgba(63,41,24,.35);
 }
 
 /* ── Barra lateral ───────────────────────────────────────────────────── */
 .dr-lado { background: var(--lado); color: var(--lado-tx); padding: 1.4rem 1rem; }
-.dr-lado-in { position: sticky; top: 1.4rem; height: calc(100vh - 2.8rem - 48px); display: flex; flex-direction: column; }
+.dr-lado-in { position: sticky; top: 1.4rem; height: calc(100vh - 2.8rem - 2 * var(--margen) - 2px); /* -2px: borde del marco */ display: flex; flex-direction: column; }
 .dr-lado-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; padding-right: .15rem; }
 .dr-marca { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: inherit; margin-bottom: .8rem; }
 .dr-marca strong { display: block; font-family: Georgia, "Times New Roman", serif; letter-spacing: .04em; font-size: 1.1rem; }
