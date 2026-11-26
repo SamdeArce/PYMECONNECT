@@ -8,13 +8,17 @@ import { iconoCat } from "../../lib/categorias.js";
 import "./directorio.css";
 
 // Estructura de las pantallas públicas: barra lateral (menú + categorías) + barra superior con buscador.
+// Las categorías muestran solo las primeras VISIBLES; el resto se abre con "Ver todas".
 // Carga una sola vez las categorías y el directorio y los comparte con las páginas hijas.
+const VISIBLES = 5;
+
 export default function DirectorioLayout({ oscuro, setOscuro, grande, setGrande }) {
   const [cats, setCats] = useState([]);
   const [lista, setLista] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [abierto, setAbierto] = useState(false);
+  const [verTodas, setVerTodas] = useState(false);
   const { ids } = useFav();
   const [params] = useSearchParams();
   const loc = useLocation();
@@ -50,7 +54,17 @@ export default function DirectorioLayout({ oscuro, setOscuro, grande, setGrande 
     lista.forEach((n) => { m[n.categoria_slug] = (m[n.categoria_slug] || 0) + 1; });
     return m;
   }, [lista]);
-  const max = Math.max(1, ...Object.values(conteo));
+
+  // Las categorías con comercios van primero (en su orden original); las vacías, al final y atenuadas.
+  const ordenadas = useMemo(() => {
+    const con = cats.filter((c) => conteo[c.slug]);
+    const sin = cats.filter((c) => !conteo[c.slug]);
+    return [...con, ...sin];
+  }, [cats, conteo]);
+  const ocultas = Math.max(0, ordenadas.length - VISIBLES);
+  // Si la categoría elegida quedaría oculta, se muestran todas para que siempre se vea cuál está activa.
+  const activaOculta = ordenadas.findIndex((c) => c.slug === cat) >= VISIBLES;
+  const mostrar = verTodas || activaOculta ? ordenadas : ordenadas.slice(0, VISIBLES);
 
   const buscar = (v) => {
     const p = new URLSearchParams(enInicio ? params : {});
@@ -81,31 +95,32 @@ export default function DirectorioLayout({ oscuro, setOscuro, grande, setGrande 
             </nav>
 
             <p className="dr-titulo-lado">Categorías</p>
-            <ul className="dr-cats">
-              {cats.map((c) => {
+            <ul className="dr-cats" id="dr-lista-cats">
+              {mostrar.map((c) => {
                 const n = conteo[c.slug] || 0;
                 return (
                   <li key={c.slug}>
-                    <Link to={`/?cat=${c.slug}`} className={`dr-cat ${cat === c.slug ? "activo" : ""}`}>
+                    <Link to={`/?cat=${c.slug}`} className={`dr-cat ${cat === c.slug ? "activo" : ""} ${n ? "" : "vacia"}`}
+                      aria-current={cat === c.slug ? "page" : undefined}
+                      aria-label={`${c.nombre}, ${n === 1 ? "1 comercio" : `${n} comercios`}`}>
                       <span className="dr-cat-ico" aria-hidden="true">{iconoCat(c.icono)}</span>
-                      <span className="dr-cat-txt">
-                        <span className="dr-cat-nombre">{c.nombre}</span>
-                        <span className="dr-barra"><i style={{ width: `${(n / max) * 100}%` }} /></span>
-                      </span>
-                      <span className="dr-num">{n}</span>
+                      <span className="dr-cat-nombre">{c.nombre}</span>
+                      <span className="dr-num" aria-hidden="true">{n}</span>
                     </Link>
                   </li>
                 );
               })}
             </ul>
+            {ocultas > 0 && !activaOculta && (
+              <button type="button" className={`dr-ver-mas ${verTodas ? "abierto" : ""}`} onClick={() => setVerTodas(!verTodas)}
+                aria-expanded={verTodas} aria-controls="dr-lista-cats">
+                {verTodas ? "Ver menos" : `Ver todas (${ocultas} más)`} <Icono n="flecha" size={16} />
+              </button>
+            )}
             </div>
 
-            <div className="dr-lado-pie">
-              <Link to="/login" className="dr-acceso dr-solo-movil"><Icono n="negocio" /> Acceso comerciantes</Link>
-              <div className="dr-ajustes">
-                <button type="button" onClick={() => setGrande(!grande)} aria-pressed={grande}>Aa {grande ? "Texto normal" : "Texto grande"}</button>
-                <button type="button" onClick={() => setOscuro(!oscuro)} aria-pressed={oscuro}>{oscuro ? "☀ Claro" : "☾ Oscuro"}</button>
-              </div>
+            <div className="dr-lado-pie dr-solo-movil">
+              <Link to="/login" className="dr-acceso"><Icono n="negocio" /> Acceso comerciantes</Link>
             </div>
           </div>
         </aside>
@@ -121,6 +136,12 @@ export default function DirectorioLayout({ oscuro, setOscuro, grande, setGrande 
               <input type="search" value={q} onChange={(e) => buscar(e.target.value)}
                 placeholder="¿Qué estás buscando? Ej. pan, café" aria-label="Buscar comercios" />
             </form>
+            <div className="dr-ajustes" role="group" aria-label="Preferencias de lectura">
+              <button type="button" onClick={() => setGrande(!grande)} aria-pressed={grande}
+                aria-label="Texto grande" title={grande ? "Volver a texto normal" : "Texto grande"}><Icono n="texto" size={20} /></button>
+              <button type="button" onClick={() => setOscuro(!oscuro)} aria-pressed={oscuro}
+                aria-label="Modo oscuro" title={oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}><Icono n={oscuro ? "sol" : "luna"} size={20} /></button>
+            </div>
             <Link to="/login" className="btn btn-primario dr-acceso-sup"><Icono n="negocio" /> Acceso comerciantes</Link>
           </header>
 
